@@ -1,5 +1,5 @@
 /*=====================================
- * Test #2.  Simple scrolling, one line worth, but fill top line of matrix
+ * 2d dev:  checkpoint.  two 1-d arrays.
  */
 //////////////////////
 // Library Includes //
