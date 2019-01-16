@@ -1,5 +1,5 @@
 /*=====================================
- * Test #2.  Simple scrolling, one line worth, but fill top line of matrix
+ * Test #3. go 2-d (8 pixels high)
  */
 //////////////////////
 // Library Includes //
@@ -38,47 +38,118 @@ int8_t cursorY = 0;  // Cursor y position, initialize top
 
 int16_t color=matrix.Color333(1,0,0);
 
+#define PIXELS_PER_COLUMN 1
+#define BUFFER_SIZE_COLUMNS 10
+#define BUFFER_SIZE_PIXELS (BUFFER_SIZE_COLUMNS*PIXELS_PER_COLUMN)
 
-#define BUFFER_SIZE 40
-uint8_t display_buffer[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
+uint8_t display_buffer[BUFFER_SIZE_PIXELS]=
+{
+  1,
+  0,
+  1,
+  1,
+  0,
+  1, 
+  1, 
+  1
+};
 
 int current_buffer_column = 0;
 
-//Window goes pixels 0 through 9.  All on top.
 #define WINDOW_START 0
-#define WINDOW_SIZE 32
+#define WINDOW_SIZE  5
 
 void setup()
 {
   matrix.begin();       // Initialize the matrix.
 
   Serial.begin(9600);   // Start serial
+ 
+}
 
-  
+void pause( void )
+{
+  #if 0
+    while (!Serial.available());
+    char c = Serial.read();
+    #endif
 }
 
 void scroll_iteration( void )
 {
   int matrix_column;
+  int matrix_row;
   int buffer_column;
+  int draw_pixel;
+  int index;
+
+  Serial.println("=======");
+  Serial.print("Current Buffer Column: ");
+  Serial.println(current_buffer_column);
+  pause();
   
-  // print, from left to right, the 10 characters from our current buffer column
+  // print, from left to right, the pixels from our current buffer column
   for (matrix_column = 0; matrix_column < WINDOW_SIZE; matrix_column++)
   {
-    buffer_column = (matrix_column + current_buffer_column) % BUFFER_SIZE;
-    if (display_buffer[buffer_column])
+    Serial.print("  matrix_column=");
+    Serial.println(matrix_column);
+    pause();
+        
+    buffer_column = (matrix_column + current_buffer_column) % BUFFER_SIZE_COLUMNS;
+    Serial.print("  buffer_column=");
+    Serial.println(   buffer_column);
+    pause();
+    
+    for (matrix_row = 0; matrix_row < PIXELS_PER_COLUMN; matrix_row++)
     {
-      matrix.drawPixel(matrix_column, 0, color);
-    }
-    else
-    {
-      //yes, we do have to draw black here to erase anything previously drawn
-      matrix.drawPixel(matrix_column, 0, 0);
-    }
-  }
+       Serial.print("    matrix_row=");
+       Serial.println(matrix_row);
+       pause();
+       
+       // optimize this later via ptr math rather than array
+       index = (buffer_column * PIXELS_PER_COLUMN) + matrix_row;
+       Serial.print("    index=");
+       Serial.println(index);
+       pause();
+       
+       draw_pixel = display_buffer[index];
+       Serial.print("    draw_pixel=");
+       Serial.println(draw_pixel);
+       pause();
+
+       if (draw_pixel)
+       {
+         Serial.print("Filling ");
+         Serial.print(matrix_column);
+         Serial.print(",");
+         Serial.println(matrix_row);
+         pause();
+         matrix.drawPixel(matrix_column, matrix_row, color);
+       }
+       else
+       {
+         Serial.print("Clearing ");
+         Serial.print(matrix_column);
+         Serial.print(",");
+         Serial.println(matrix_row);
+         pause();
+
+          //yes, we do have to draw black here to erase anything previously drawn
+          matrix.drawPixel(matrix_column, matrix_row, 0);
+       }
+
+       
+    }  // end of drawing a column
+  }  // end of drawing rows
 
   // next time through we're gonna want the next line, so increment current_buffer_column
-  current_buffer_column = (current_buffer_column + 1) % BUFFER_SIZE;
+  current_buffer_column = (current_buffer_column + 1) % BUFFER_SIZE_COLUMNS;
+
+  Serial.print("Current Buffer Column: ");
+  Serial.println(current_buffer_column);
+  Serial.println("+++++++");
+  pause();
+  
   
 }
 
