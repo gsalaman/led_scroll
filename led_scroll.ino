@@ -1,5 +1,5 @@
 /*=====================================
- * Test #1.  Simple scrolling, one line worth
+ * Test #2.  Simple scrolling, one line worth, but fill top line of matrix
  */
 //////////////////////
 // Library Includes //
@@ -38,15 +38,15 @@ int8_t cursorY = 0;  // Cursor y position, initialize top
 
 int16_t color=matrix.Color333(1,0,0);
 
-// Buffer of 20, display in window of 10
-#define BUFFER_SIZE 20 
+
+#define BUFFER_SIZE 40
 uint8_t display_buffer[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
 
 int current_buffer_column = 0;
 
 //Window goes pixels 0 through 9.  All on top.
 #define WINDOW_START 0
-#define WINDOW_SIZE 10
+#define WINDOW_SIZE 32
 
 void setup()
 {
