@@ -51,9 +51,6 @@ uint8_t row5[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
 uint8_t row6[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
 uint8_t row7[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
 
-#define NUM_ROWS 2
-uint8_t *rows[NUM_ROWS] = {row0, row1};
-
 int current_buffer_column = 0;
 
 //Window goes pixels 0 through 9.  All on top.
@@ -64,57 +61,38 @@ void setup()
 {
   matrix.begin();       // Initialize the matrix.
 
-  Serial.begin(9600);   // Start serial
-
-  memprint_bytes(row0);
-  memprint_bytes(row1);
-  memprint_bytes(rows);
-
-  
+  Serial.begin(9600);   // Start serial  
 }
 
 void scroll_iteration( void )
 {
-  int8_t matrix_column;
-  int8_t buffer_column;
-  int8_t current_row;
-  uint8_t *row_ptr;
+  int matrix_column;
+  int buffer_column;
 
-  Serial.println("Enter scroll_iteration");
+  
   
   // print, from left to right, the 10 characters from our current buffer column
   for (matrix_column = 0; matrix_column < WINDOW_SIZE; matrix_column++)
   {
     buffer_column = (matrix_column + current_buffer_column) % BUFFER_SIZE;
 
-    Serial.print("buffer_column=");
-    Serial.print(buffer_column);
-    Serial.print(" matrix_column=");
-    Serial.println(matrix_column);
-
-    for (current_row = 0; current_row < NUM_ROWS; current_row++)
-    {
-      row_ptr = rows[current_row];
-
-      Serial.print("pixel: ");
-      Serial.print(matrix_column);
-      Serial.print(",");
-      Serial.println(current_row);
-
-      //memprint_bytes(&current_row, 2);
-      
-      if (row_ptr[buffer_column])
-      {
-        matrix.drawPixel(matrix_column, current_row, color);
-      }
-      else
-      {
-        //yes, we do have to draw black here to erase anything previously drawn
-        matrix.drawPixel(matrix_column, current_row, 0);
-      }
-
-      //memprint_bytes(&current_row, 2);
-    }
+    // BLEAH!!! 8 times, by hand????
+    if (row0[buffer_column]) matrix.drawPixel(matrix_column, 0, color);
+    else matrix.drawPixel(matrix_column, 0, 0);    
+    if (row1[buffer_column]) matrix.drawPixel(matrix_column, 1, color);
+    else matrix.drawPixel(matrix_column, 1, 0);
+    if (row2[buffer_column]) matrix.drawPixel(matrix_column, 2, color);
+    else matrix.drawPixel(matrix_column, 2, 0);
+    if (row3[buffer_column]) matrix.drawPixel(matrix_column, 3, color);
+    else matrix.drawPixel(matrix_column, 3, 0);
+    if (row4[buffer_column]) matrix.drawPixel(matrix_column, 4, color);
+    else matrix.drawPixel(matrix_column, 4, 0);
+    if (row5[buffer_column]) matrix.drawPixel(matrix_column, 5, color);
+    else matrix.drawPixel(matrix_column, 5, 0);
+    if (row6[buffer_column]) matrix.drawPixel(matrix_column, 6, color);
+    else matrix.drawPixel(matrix_column, 6, 0);
+    if (row7[buffer_column]) matrix.drawPixel(matrix_column, 7, color);
+    else matrix.drawPixel(matrix_column, 7, 0);
     
   }
 
