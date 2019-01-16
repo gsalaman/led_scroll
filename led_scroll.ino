@@ -40,7 +40,8 @@ int16_t color=matrix.Color333(1,0,0);
 
 
 #define BUFFER_SIZE 40
-uint8_t display_buffer[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
+uint8_t row0[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
+uint8_t row1[BUFFER_SIZE]={1,0,1,1,0,1,1,1,0,1,1,1,1,0};
 
 int current_buffer_column = 0;
 
@@ -66,7 +67,9 @@ void scroll_iteration( void )
   for (matrix_column = 0; matrix_column < WINDOW_SIZE; matrix_column++)
   {
     buffer_column = (matrix_column + current_buffer_column) % BUFFER_SIZE;
-    if (display_buffer[buffer_column])
+
+    // cumbersome, but a decent test...
+    if (row0[buffer_column])
     {
       matrix.drawPixel(matrix_column, 0, color);
     }
@@ -75,6 +78,16 @@ void scroll_iteration( void )
       //yes, we do have to draw black here to erase anything previously drawn
       matrix.drawPixel(matrix_column, 0, 0);
     }
+    if (row1[buffer_column])
+    {
+      matrix.drawPixel(matrix_column, 1, color);
+    }
+    else
+    {
+      //yes, we do have to draw black here to erase anything previously drawn
+      matrix.drawPixel(matrix_column, 1, 0);
+    }
+
   }
 
   // next time through we're gonna want the next line, so increment current_buffer_column
