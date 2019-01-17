@@ -51,7 +51,7 @@ void setup()
 
   propagate_data();
   
-  //Serial.begin(9600);   // Start serial  
+  Serial.begin(9600);   // Start serial  
 }
 
 #if 0
@@ -106,14 +106,17 @@ void propagate_data( void )
   {
     if (i%3) data[i]=1;
   }
+
+  // 
 }
 
 void test_multiple_writes( void )
 {
   int16_t color;
   int16_t blank;
-  int x;
-  int y;
+  int x;  // window column
+  int y;  // window row
+  int buf_x_index;
 
   static int buffer_column=0;
 
@@ -124,19 +127,23 @@ void test_multiple_writes( void )
   {
     for (y=0; y<WINDOW_ROWS; y++)
     {
-      if ( data[((y*BUFFER_COLUMNS)+x)] ) matrix.drawPixel(x, y, color);
+      buf_x_index = (x+buffer_column) % BUFFER_COLUMNS;
+      
+      if ( data[((y*BUFFER_COLUMNS)+buf_x_index)] ) matrix.drawPixel(x, y, color);
       else matrix.drawPixel(x, y, blank);
     }
   }
   
+  buffer_column++;
+  if (buffer_column == BUFFER_COLUMNS) buffer_column = 0;
 }
 void loop()
 {
    test_multiple_writes();
    //scroll_iteration();
    
-   //while (!Serial.available());
-   //char c = Serial.read();
-   delay(50);
+   while (!Serial.available());
+   char c = Serial.read();
+   //delay(50);
    
 }
