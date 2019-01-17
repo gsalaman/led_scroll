@@ -89,17 +89,20 @@ void scroll_iteration( void )
 }
 #endif
 
-bool data[32*2]={0};
+#define BUFFER_COLUMNS 32
+#define WINDOW_COLUMNS 10
+#define WINDOW_ROWS     2
+bool data[BUFFER_COLUMNS*WINDOW_ROWS]={0};
 
 void propagate_data( void )
 {
   int i;
 
-  for (i=0; i<32; i++)
+  for (i=0; i<BUFFER_COLUMNS; i++)
   {
     if (i%2) data[i]=1;
   }
-  for (i=32; i<64; i++)
+  for (i=BUFFER_COLUMNS; i<BUFFER_COLUMNS*2; i++)
   {
     if (i%3) data[i]=1;
   }
@@ -112,14 +115,16 @@ void test_multiple_writes( void )
   int x;
   int y;
 
+  static int buffer_column=0;
+
   color = matrix.Color333(1,0,0);
   blank = 0;
 
-  for (x=0; x<32; x++)
+  for (x=0; x<WINDOW_COLUMNS; x++)
   {
-    for (y=0; y<2; y++)
+    for (y=0; y<WINDOW_ROWS; y++)
     {
-      if ( data[((y*32)+x)] ) matrix.drawPixel(x, y, color);
+      if ( data[((y*BUFFER_COLUMNS)+x)] ) matrix.drawPixel(x, y, color);
       else matrix.drawPixel(x, y, blank);
     }
   }
