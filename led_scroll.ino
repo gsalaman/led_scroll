@@ -89,9 +89,12 @@ void scroll_iteration( void )
 }
 #endif
 
-#define BUFFER_COLUMNS 32
+
+//  Okay, weird!  We seem to get memory corruption when this array is bigger than about 60 bytes
+// (60 works, 70 does not)
+#define BUFFER_COLUMNS 15
 #define WINDOW_COLUMNS 10
-#define WINDOW_ROWS     2
+#define WINDOW_ROWS     4
 bool data[BUFFER_COLUMNS*WINDOW_ROWS]={0};
 
 void propagate_data( void )
@@ -107,7 +110,13 @@ void propagate_data( void )
     if (i%3) data[i]=1;
   }
 
-  // 
+  for (i=BUFFER_COLUMNS*2; i<BUFFER_COLUMNS*3; i++)
+  {
+    if (i%4) data[i]=1;
+  }
+
+//  for (i=BUFFER_COLUMNS*7; i<BUFFER_COLUMNS*8; i++)
+//  data[i]= 1;
 }
 
 void test_multiple_writes( void )
@@ -128,6 +137,7 @@ void test_multiple_writes( void )
     for (y=0; y<WINDOW_ROWS; y++)
     {
       buf_x_index = (x+buffer_column) % BUFFER_COLUMNS;
+      //buf_x_index = (x+buffer_column);
       
       if ( data[((y*BUFFER_COLUMNS)+buf_x_index)] ) matrix.drawPixel(x, y, color);
       else matrix.drawPixel(x, y, blank);
